@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class PropsHelper {
 
-    public Properties parsePropFile(String file) throws IOException {
+    public Properties parsePropFile(String file) {
         Properties properties = new Properties();
         try {
             properties.load(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(file)));
