@@ -26,13 +26,13 @@ Run the test with command:
 
 Test should cover:
 
-#Create a client
+Create a client
 
-#Create an account for the client
+Create an account for the client
 
-#Make a deposit to the account
+Make a deposit to the account
 
-#Check that you created a millionare!
+Check that you created a millionare!
 
 
 Thanks.
