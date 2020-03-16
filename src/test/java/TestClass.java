@@ -1,13 +1,11 @@
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-import org.apache.http.entity.ContentType;
 import org.awaitility.pollinterval.FibonacciPollInterval;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import test.helpers.UrlHelper;
-import test.helpers.ClientBuilder;
+import test.helpers.domain.ClientBuilder;
 import test.helpers.PropsHelper;
 
 import java.io.IOException;
@@ -58,7 +56,7 @@ public class TestClass {
         return getResponse.statusCode() == HttpStatus.SC_OK;
     }
 
-//    @Test
+    @Test
     public void createClientTest() throws IOException {
         String endpoint = propsHelper.parsePropFile("test.properties").getProperty("clients.endpoint");
         Response response = postRequestHandler(endpoint);
@@ -79,7 +77,7 @@ public class TestClass {
         assertThat(requestClientBuilder.toString(), equalTo(responseClientBuilder.toString()));
     }
 
-    @Test
+//    @Test
     public void createAccountTest() {
 
     }

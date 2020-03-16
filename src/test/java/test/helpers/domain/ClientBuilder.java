@@ -1,4 +1,4 @@
-package test.helpers;
+package test.helpers.domain;
 
 import com.github.javafaker.Faker;
 import com.github.javafaker.service.FakeValuesService;
