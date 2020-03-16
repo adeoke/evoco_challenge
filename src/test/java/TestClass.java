@@ -107,7 +107,6 @@ public class TestClass {
 
         // async
         retryInvocation(() -> getHandler(response.getHeader("Location")));
-        System.out.println(getResponse.getBody().path("id").toString());
         clientIdBuilder.setClientId(getResponse.getBody().path("id").toString());
         clientIdBuilder.build();
 
@@ -139,7 +138,6 @@ public class TestClass {
 
         // async
         retryInvocation(() -> getHandler(response.getHeader("Location")));
-        System.out.println(getResponse.getBody().path("id").toString());
         clientIdBuilder.setClientId(getResponse.getBody().path("id").toString());
         clientIdBuilder.build();
 
