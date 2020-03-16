@@ -1,20 +1,22 @@
 package test.helpers;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PropsHelper {
-    public Properties propertyFile(String file) {
-        String rootPath = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("")).getPath();
-        String testProperties = rootPath + file;
-        Properties appProps = new Properties();
+
+    public Properties parsePropFile(String file) throws IOException {
+        Properties properties = new Properties();
         try {
-            appProps.load(new FileInputStream(testProperties));
+            properties.load(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(file)));
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
         }
-        return appProps;
+        return properties;
     }
 }

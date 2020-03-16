@@ -1,13 +1,16 @@
-import com.github.javafaker.Faker;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
+import org.apache.http.entity.ContentType;
 import org.awaitility.pollinterval.FibonacciPollInterval;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import test.helpers.UrlHelper;
 import test.helpers.ClientBuilder;
 import test.helpers.PropsHelper;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -17,26 +20,26 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 public class TestClass {
-    private Faker faker;
-    private String firstName;
     private ClientBuilder requestClientBuilder;
     private ClientBuilder responseClientBuilder;
     private Response getResponse;
+    private UrlHelper urlHelper;
     private PropsHelper propsHelper;
+    private final String appJsonHeader = "application/json";
 
     @BeforeEach
-    public void setUp() {
-        RestAssured.baseURI = "http://localhost";
-        RestAssured.port = 8080;
-        RestAssured.basePath = "/";
+    public void setUp() throws IOException {
+        propsHelper = new PropsHelper();
+        RestAssured.baseURI = propsHelper.parsePropFile("test.properties").getProperty("app.base.uri");
+        RestAssured.port = Integer.parseInt(propsHelper.parsePropFile("test.properties").getProperty("app.port"));
+        RestAssured.basePath = propsHelper.parsePropFile("test.properties").getProperty("app.base.path");
         requestClientBuilder = new ClientBuilder().build();
+        responseClientBuilder = new ClientBuilder();
     }
 
-    //
     private Response postRequestHandler(String endpoint) {
-
         return RestAssured.given().log().all()
-                .header("Content-Type", "application/json")
+                .contentType(appJsonHeader)
                 .body(requestClientBuilder.toString())
                 .post(endpoint);
     }
@@ -50,20 +53,21 @@ public class TestClass {
 
     private Boolean getHandler(String endpoint) {
         getResponse = RestAssured.given().log().all()
-                .header("Content-Type", "application/json")
+                .contentType(appJsonHeader)
                 .get(endpoint);
-        return getResponse.statusCode() == 200;
+        return getResponse.statusCode() == HttpStatus.SC_OK;
     }
 
 //    @Test
-    public void createClientTest() {
-        String endpoint = "clients";
+    public void createClientTest() throws IOException {
+        String endpoint = propsHelper.parsePropFile("test.properties").getProperty("clients.endpoint");
         Response response = postRequestHandler(endpoint);
 
-        assertThat(response.getStatusCode(), is(201));
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_CREATED));
 
         assertThat(response.getHeaders().hasHeaderWithName("Location"), is(true));
-        requestClientBuilder.setId(StringUtils.right(response.getHeader("Location"), 36));
+        urlHelper = new UrlHelper(response.getHeader("Location"));
+        requestClientBuilder.setId(urlHelper.getPath());
 
         // async
         retryInvocation(() -> getHandler(response.getHeader("Location")));
@@ -72,12 +76,21 @@ public class TestClass {
         responseClientBuilder.setName(getResponse.getBody().path("name"));
         responseClientBuilder.setEmail(getResponse.getBody().path("email"));
 
-        assertThat(requestClientBuilder, equalTo(responseClientBuilder));
+        assertThat(requestClientBuilder.toString(), equalTo(responseClientBuilder.toString()));
     }
 
     @Test
-    public void propertiesTest() {
+    public void createAccountTest() {
 
-        System.out.println(propsHelper.propertyFile("test.properties").getProperty("app.base.uri"));
     }
+
+//    @Test
+//    public void depositTest() {
+//
+//    }
+//
+//    @Test
+//    public void checkBalanceTest() {
+//
+//    }
 }
