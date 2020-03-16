@@ -18,9 +18,14 @@ Run the test with command:
 `mvn -U clean test`
 
 Test should cover:
+
 Create a client
+
 Create an account for the client
+
 Make a deposit to the account
+
 Check that you created a millionare!
+
 
 Thanks.
